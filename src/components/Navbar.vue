@@ -1,8 +1,29 @@
-<script setup></script>
+<script setup>
+import { ref, onMounted } from "vue";
+import { useAuthStore } from "../stores/auth";
+const isShowing = ref(false);
+
+const toggle = () => {
+  isShowing.value = !isShowing.value;
+};
+
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+const handleClickOutside = (event) => {
+  if (!event.target.closest(".max-w-screen-xl")) {
+    isShowing.value = false;
+  }
+};
+
+const authStore = useAuthStore();
+</script>
 
 <template>
   <nav class="bg-white border-gray-200 dark:bg-gray-900">
     <div
+      ref="navbar"
       class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4"
     >
       <router-link :to="{ name: 'Home' }" class="flex items-center">
@@ -13,11 +34,9 @@
       </router-link>
 
       <button
-        data-collapse-toggle="navbar-default"
+        @click="toggle"
         type="button"
         class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-        aria-controls="navbar-default"
-        aria-expanded="false"
       >
         <span class="sr-only">Open main menu</span>
         <svg
@@ -37,18 +56,10 @@
         </svg>
       </button>
 
-      <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+      <div :class="{ hidden: !isShowing, 'w-full md:block md:w-auto': true }">
         <ul
           class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"
         >
-          <li>
-            <router-link
-              :to="{ name: 'Home' }"
-              class="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
-              aria-current="page"
-              >Home</router-link
-            >
-          </li>
           <li>
             <router-link
               :to="{ name: 'Register' }"
@@ -62,6 +73,14 @@
               class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
               >Login</router-link
             >
+          </li>
+          <li>
+            <button
+              @click.prevent="authStore.logout()"
+              class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+            >
+              Logout
+            </button>
           </li>
         </ul>
       </div>

@@ -40,6 +40,14 @@ router.beforeEach((to, from, next) => {
     return next({ name: "Login" });
   }
 
+  if (
+    (to.name == "Login" && authStore.authenticated) ||
+    (to.name == "Register" && authStore.authenticated) ||
+    (to.name == "Forgot" && authStore.authenticated)
+  ) {
+    return next({ name: "Home" });
+  }
+
   next();
 });
 

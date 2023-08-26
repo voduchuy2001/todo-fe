@@ -7,13 +7,17 @@ export const useTodoStore = defineStore("todo", {
     isLoading: false,
   }),
   getters: {
-    todo: (state) => state.todos,
+    todoList: (state) => state.todos,
   },
   actions: {
-    async getList() {
+    async fetchData() {
       this.isLoading = true;
       await axios
-        .get("http://127.0.0.1:8000/api/todo")
+        .get("http://127.0.0.1:8000/api/todo", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        })
         .then((response) => {
           this.todos = response.data.data.data;
           this.isLoading = false;
