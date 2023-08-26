@@ -1,5 +1,8 @@
 import axios from "axios";
 import { defineStore } from "pinia";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -12,35 +15,39 @@ export const useAuthStore = defineStore("auth", {
     setToken(token) {
       this.token = token;
     },
-    async login(data) {
+    async login(email, password) {
       await axios
         .post("http://127.0.0.1:8000/api/auth/login", {
-          email: data.email,
-          password: data.password,
+          email: email,
+          password: password,
         })
         .then((response) => {
           this.setToken(response.data.access_token);
           localStorage.setItem("access_token", response.data.access_token);
+          toast.success("Login successfully");
           this.router.push("/");
         })
         .catch((error) => {
           console.log(error);
+          toast.error("Unauthorized");
         });
     },
-    async register(data) {
+    async register(name, email, password, password_confirmation) {
       await axios
         .post("http://127.0.0.1:8000/api/auth/register", {
-          name: data.name,
-          email: data.email,
-          password: data.password,
-          password_confirmation: data.password_confirmation,
+          name: name,
+          email: email,
+          password: password,
+          password_confirmation: password_confirmation,
         })
         .then((response) => {
-          console.log(response.data);
+          console.log(response);
+          toast.success("Register successfully");
           this.router.push("/login");
         })
         .catch((error) => {
           console.log(error);
+          toast.error("Email has already been taken");
         });
     },
     async me() {
@@ -51,7 +58,7 @@ export const useAuthStore = defineStore("auth", {
           },
         })
         .then((response) => {
-          console.log(response.data);
+          console.log(response);
         })
         .catch((error) => {
           console.log(error);
@@ -65,7 +72,7 @@ export const useAuthStore = defineStore("auth", {
           },
         })
         .then((response) => {
-          console.log(response.data);
+          console.log(response);
           localStorage.removeItem("access_token");
           this.token = null;
           this.router.push({ name: "Login" });
