@@ -1,29 +1,29 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../components/Home.vue";
+import Todo from "../pages/todo/Todo.vue";
 import { useAuthStore } from "../stores/auth";
 
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: Home,
+    name: "Todo",
+    component: Todo,
     meta: { requiresAuth: true },
   },
   {
     path: "/login",
     name: "Login",
-    component: () => import("../components/Login.vue"),
+    component: () => import("../pages/auth/Login.vue"),
   },
   {
     path: "/register",
     name: "Register",
-    component: () => import("../components/Register.vue"),
+    component: () => import("../pages/auth/Register.vue"),
     meta: { requiresAuth: false },
   },
   {
     path: "/forgot-password",
     name: "Forgot",
-    component: () => import("../components/Forgot.vue"),
+    component: () => import("../pages/auth/Forgot.vue"),
     meta: { requiresAuth: false },
   },
 ];
@@ -45,7 +45,7 @@ router.beforeEach((to, from, next) => {
     (to.name == "Register" && authStore.authenticated) ||
     (to.name == "Forgot" && authStore.authenticated)
   ) {
-    return next({ name: "Home" });
+    return next({ name: "Todo" });
   }
 
   next();
