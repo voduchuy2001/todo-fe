@@ -52,7 +52,7 @@ export const useAuthStore = defineStore("auth", {
     },
     async me() {
       await axios
-        .get("http://127.0.0.1:8000/api/auth/me", {
+        .post("http://127.0.0.1:8000/api/auth/me", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
@@ -66,7 +66,7 @@ export const useAuthStore = defineStore("auth", {
     },
     async logout() {
       await axios
-        .get("http://127.0.0.1:8000/api/auth/logout", {
+        .post("http://127.0.0.1:8000/api/auth/logout", null, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
