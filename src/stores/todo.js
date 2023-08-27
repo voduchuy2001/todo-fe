@@ -1,5 +1,8 @@
 import axios from "axios";
 import { defineStore } from "pinia";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 export const useTodoStore = defineStore("todo", {
   state: () => ({
@@ -59,6 +62,44 @@ export const useTodoStore = defineStore("todo", {
         this.currentPage++;
         this.fetchData();
       }
+    },
+    async create(name, content) {
+      await axios
+        .post(
+          "http://127.0.0.1:8000/api/todo",
+          {
+            name: name,
+            content: content,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log(response.data);
+          toast.success("Create success");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    async delete(id) {
+      await axios
+        .delete(`http://127.0.0.1:8000/api/todo/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          this.todos = this.todos.filter((todo) => todo.id !== id);
+          toast.success("Delete success");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
 });
