@@ -79,6 +79,8 @@ export const useTodoStore = defineStore("todo", {
         )
         .then((response) => {
           console.log(response.data);
+          const newTodo = response.data.data;
+          this.todos = [newTodo, ...this.todos];
           toast.success("Create success");
         })
         .catch((error) => {
