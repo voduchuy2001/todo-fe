@@ -270,30 +270,34 @@ const handleDelete = (todoId) => {
               <td class="px-6 py-4">{{ todo?.name }}</td>
               <td class="px-6 py-4">{{ todo?.content }}</td>
               <td class="px-6 py-4 space-x-4">
-                <span
+                <button
                   class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                  >Edit</span
                 >
+                  Edit
+                </button>
 
                 <template v-if="!confirmDelete[todo.id]">
-                  <span
+                  <button
                     @click="confirm(todo.id)"
                     class="font-medium text-red-600 dark:text-red-500 hover:underline"
-                    >Delete</span
                   >
+                    Delete
+                  </button>
                 </template>
                 <template v-else>
-                  <span
+                  <button
                     @click="handleDelete(todo.id)"
                     class="font-medium text-red-600 dark:text-red-500 hover:underline"
-                    >Yes</span
                   >
+                    Yes
+                  </button>
 
-                  <span
+                  <button
                     @click="cancel(todo.id)"
                     class="font-medium text-yellow-600 dark:text-yellow-500 hover:underline"
-                    >Cancel</span
                   >
+                    Cancel
+                  </button>
                 </template>
               </td>
             </tr>
