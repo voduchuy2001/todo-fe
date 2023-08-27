@@ -1,12 +1,15 @@
 <script setup>
 import AppLayout from "../../layouts/AppLayout.vue";
 import { useTodoStore } from "../../stores/todo";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 
 const todoStore = useTodoStore();
+const showPagination = ref(false);
 
 onMounted(async () => {
   await todoStore.fetchData();
+  showPagination.value =
+    todoStore.totalItems > todoStore.perPage && todoStore.todos.length > 0;
 });
 </script>
 
@@ -78,7 +81,6 @@ onMounted(async () => {
             class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
           >
             <tr>
-              <th scope="col" class="p-4"></th>
               <th scope="col" class="p-4">Id</th>
               <th scope="col" class="px-6 py-3">Title</th>
               <th scope="col" class="px-6 py-3">Content</th>
@@ -91,18 +93,6 @@ onMounted(async () => {
               :key="todo.id"
               class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
             >
-              <td class="w-4 p-4">
-                <div class="flex items-center">
-                  <input
-                    id="checkbox-table-search-1"
-                    type="checkbox"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label for="checkbox-table-search-1" class="sr-only"
-                    >checkbox</label
-                  >
-                </div>
-              </td>
               <td class="w-4 p-4">
                 <div class="flex items-center">
                   <label>{{ todo?.id }}</label>
@@ -124,9 +114,97 @@ onMounted(async () => {
                 >
               </td>
             </tr>
+
+            <tr v-if="todoStore.totalItems === 0" class="bg-white border-b">
+              <td colspan="100%">
+                <div class="text-center py-6">
+                  <svg
+                    class="mx-auto h-12 w-12 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      vector-effect="non-scaling-stroke"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="3"
+                      d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+                    />
+                  </svg>
+                  <p
+                    class="mt-3 text-base font-semibold text-gray-900 text-uppercase"
+                  >
+                    There's no data available
+                  </p>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
     </section>
+    <div v-if="showPagination" class="flex flex-col items-center mb-6">
+      <span class="text-sm text-gray-700 dark:text-gray-400">
+        Showing
+        <span class="font-semibold text-gray-900 dark:text-white">{{
+          todoStore.from
+        }}</span>
+        to
+        <span class="font-semibold text-gray-900 dark:text-white">{{
+          todoStore.to
+        }}</span>
+        of
+        <span class="font-semibold text-gray-900 dark:text-white">{{
+          todoStore.totalItems
+        }}</span>
+        Entries
+      </span>
+      <div class="inline-flex mt-2 xs:mt-0">
+        <button
+          @click="todoStore.previousPage"
+          class="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+        >
+          <svg
+            class="w-3.5 h-3.5 mr-2"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 10"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 5H1m0 0 4 4M1 5l4-4"
+            />
+          </svg>
+          Prev
+        </button>
+        <button
+          @click="todoStore.nextPage"
+          class="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 border-0 border-l border-gray-700 rounded-r hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+        >
+          Next
+          <svg
+            class="w-3.5 h-3.5 ml-2"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 10"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M1 5h12m0 0L9 1m4 4L9 9"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
   </AppLayout>
 </template>
