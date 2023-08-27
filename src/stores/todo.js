@@ -6,7 +6,7 @@ export const useTodoStore = defineStore("todo", {
     todos: [],
     isLoading: false,
     currentPage: 1,
-    perPage: 10,
+    perPage: 0,
     totalItems: 0,
     from: 0,
     to: 0,
@@ -18,17 +18,22 @@ export const useTodoStore = defineStore("todo", {
     },
   },
   actions: {
-    async fetchData() {
+    async fetchData(query) {
       this.isLoading = true;
+      const params = {
+        page: this.currentPage,
+      };
+
+      if (query) {
+        params.query = query;
+      }
+
       await axios
         .get("http://127.0.0.1:8000/api/todo", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
-          params: {
-            page: this.currentPage,
-            per_page: this.perPage,
-          },
+          params: params,
         })
         .then((response) => {
           this.todos = response.data.data.data;

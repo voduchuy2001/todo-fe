@@ -1,15 +1,24 @@
 <script setup>
 import AppLayout from "../../layouts/AppLayout.vue";
 import { useTodoStore } from "../../stores/todo";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 
 const todoStore = useTodoStore();
 const showPagination = ref(false);
+const queryString = ref("");
 
 onMounted(async () => {
-  await todoStore.fetchData();
+  await fetchTodoData();
+});
+
+const fetchTodoData = async () => {
+  await todoStore.fetchData(queryString.value);
   showPagination.value =
     todoStore.totalItems > todoStore.perPage && todoStore.todos.length > 0;
+};
+
+watch(queryString, () => {
+  fetchTodoData();
 });
 </script>
 
@@ -67,6 +76,7 @@ onMounted(async () => {
               </svg>
             </div>
             <input
+              v-model="queryString"
               type="text"
               id="table-search"
               class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
