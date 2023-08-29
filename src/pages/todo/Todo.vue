@@ -10,7 +10,6 @@ const showPagination = ref(false);
 const queryString = ref("");
 const showModal = ref(false);
 const confirmDelete = ref({});
-
 const schema = Yup.object().shape({
   name: Yup.string().required().max(250),
   content: Yup.string().required(),
@@ -30,9 +29,10 @@ watch(queryString, () => {
   fetchTodoData();
 });
 
-const handleCreate = (values) => {
+const handleCreate = (values, { resetForm }) => {
   const { name, content } = values;
   showModal.value = false;
+  resetForm();
   return todoStore.create(name, content);
 };
 
@@ -102,7 +102,6 @@ const handleDelete = (todoId) => {
           </svg>
           Create
         </button>
-
         <div
           class="fixed inset-0 flex items-center justify-center z-50 px-3"
           v-show="showModal"
@@ -258,24 +257,18 @@ const handleDelete = (todoId) => {
           </thead>
           <tbody>
             <tr
-              v-for="todo in todoStore.todos"
+              v-for="(todo, index) in todoStore.todos"
               :key="todo.id"
               class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
             >
               <td class="w-4 p-4">
                 <div class="flex items-center">
-                  <label>{{ todo?.id }}</label>
+                  <label>{{ index + 1 }}</label>
                 </div>
               </td>
               <td class="px-6 py-4">{{ todo?.name }}</td>
               <td class="px-6 py-4">{{ todo?.content }}</td>
               <td class="px-6 py-4 space-x-4">
-                <button
-                  class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >
-                  Edit
-                </button>
-
                 <template v-if="!confirmDelete[todo.id]">
                   <button
                     @click="confirm(todo.id)"
