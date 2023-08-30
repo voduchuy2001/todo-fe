@@ -295,7 +295,10 @@ const handleDelete = (todoId) => {
               </td>
             </tr>
 
-            <tr v-if="todoStore.totalItems === 0" class="bg-white border-b">
+            <tr
+              v-if="todoStore.todoList.length === 0"
+              class="bg-white border-b"
+            >
               <td colspan="100%">
                 <div class="text-center py-6">
                   <svg
